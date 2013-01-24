@@ -14,6 +14,7 @@ import com.vividsolutions.jts.geom.prep.PreparedGeometryFactory;
 import com.vividsolutions.jts.index.strtree.STRtree;
 import gov.usgs.cida.coastalhazards.util.CRSUtils;
 import static gov.usgs.cida.coastalhazards.util.Constants.*;
+import gov.usgs.cida.coastalhazards.util.LayerImportUtil;
 import gov.usgs.cida.coastalhazards.util.UTMFinder;
 import gov.usgs.cida.coastalhazards.wps.exceptions.LayerAlreadyExistsException;
 import gov.usgs.cida.coastalhazards.wps.exceptions.PoorlyDefinedBaselineException;
@@ -52,12 +53,10 @@ import org.opengis.referencing.crs.CoordinateReferenceSystem;
         version = "1.0.0")
 public class GenerateTransectsProcess implements GeoServerProcess {
 
-    private ImportProcess importProcess;
-    private Catalog catalog;
+    private LayerImportUtil importer;
     
     public GenerateTransectsProcess(ImportProcess importProcess, Catalog catalog) {
-        this.importProcess = importProcess;
-        this.catalog = catalog;
+        this.importer = new LayerImportUtil(catalog, importProcess);
     }
 
     /** May actually want to return reference to new layer
@@ -112,6 +111,8 @@ public class GenerateTransectsProcess implements GeoServerProcess {
         }
         
         protected String execute() throws Exception {
+            importer.checkIfLayerExists(workspace, layer);
+            
             CoordinateReferenceSystem shorelinesCrs = CRSUtils.getCRSFromFeatureCollection(shorelineFeatureCollection);
             CoordinateReferenceSystem baselineCrs = CRSUtils.getCRSFromFeatureCollection(baselineFeatureCollection);
             if (!CRS.equalsIgnoreMetadata(shorelinesCrs, REQUIRED_CRS_WGS84)) {
@@ -140,7 +141,7 @@ public class GenerateTransectsProcess implements GeoServerProcess {
             TransectVector[] vectsOnBaseline = getEvenlySpacedOrthoVectorsAlongBaseline(baselineGeometry, shorelineGeometry, spacing);
             
             SimpleFeatureCollection resultingTransects = trimTransectsToFeatureCollection(vectsOnBaseline, shorelineGeometry);
-            String layerName = addResultAsLayer(resultingTransects, workspace, store, layer);
+            String layerName = importer.importLayer(resultingTransects, workspace, store, layer, utmCrs, ProjectionPolicy.REPROJECT_TO_DECLARED);
             return layerName;
         }
 
@@ -208,16 +209,6 @@ public class GenerateTransectsProcess implements GeoServerProcess {
                     new Object[]{line, new Integer(transectId), new Integer(orientation)}, null);
             transectId++;
             return feature;
-        }
-        
-        private String addResultAsLayer(SimpleFeatureCollection transects, String workspace, String store, String layer) {
-            LayerInfo layerByName = catalog.getLayerByName(workspace + ":" + layer);
-            if (layerByName == null) {
-                return importProcess.execute(transects, workspace, store, layer, utmCrs, ProjectionPolicy.REPROJECT_TO_DECLARED, null);
-            }
-            else {
-                throw new LayerAlreadyExistsException("Please specify a new layer name");
-            }
         }
 
         /**

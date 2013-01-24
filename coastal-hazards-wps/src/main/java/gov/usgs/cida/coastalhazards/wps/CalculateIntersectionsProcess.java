@@ -29,6 +29,7 @@ import org.geotools.process.factory.DescribeProcess;
 import org.geotools.process.factory.DescribeResult;
 import org.geotools.referencing.CRS;
 import static gov.usgs.cida.coastalhazards.util.Constants.*;
+import gov.usgs.cida.coastalhazards.util.LayerImportUtil;
 import gov.usgs.cida.coastalhazards.wps.exceptions.LayerAlreadyExistsException;
 import org.geoserver.catalog.Catalog;
 import org.geoserver.catalog.LayerInfo;
@@ -49,12 +50,10 @@ description = "Create an intersection layer from the transects and shorelines, w
 version = "1.0.0")
 public class CalculateIntersectionsProcess implements GeoServerProcess {
 
-    private ImportProcess importProcess;
-    private Catalog catalog;
+    private LayerImportUtil importer;
     
     public CalculateIntersectionsProcess(ImportProcess importProcess, Catalog catalog) {
-        this.importProcess = importProcess;
-        this.catalog = catalog;
+        this.importer = new LayerImportUtil(catalog, importProcess);
     }
 
     @DescribeResult(name = "intersections", description = "Layer containing intersections of shorelines and transects")
@@ -111,6 +110,7 @@ public class CalculateIntersectionsProcess implements GeoServerProcess {
         }
 
         private String execute() throws Exception {
+            importer.checkIfLayerExists(workspace, layer);
 
             CoordinateReferenceSystem shorelinesCrs = CRSUtils.getCRSFromFeatureCollection(shorelines);
             CoordinateReferenceSystem transectsCrs = CRSUtils.getCRSFromFeatureCollection(transects);
@@ -197,14 +197,7 @@ public class CalculateIntersectionsProcess implements GeoServerProcess {
             }
             SimpleFeatureCollection intersectionCollection = DataUtilities.collection(sfList);
             
-            LayerInfo layerByName = catalog.getLayerByName(workspace + ":" + layer);
-            if (layerByName == null) {
-                return importProcess.execute(intersectionCollection, workspace, store, layer, utmCrs, ProjectionPolicy.REPROJECT_TO_DECLARED, null);
-            }
-            else {
-                throw new LayerAlreadyExistsException("Please specify a new layer name");
-            }
-            
+            return importer.importLayer(intersectionCollection, workspace, store, layer, utmCrs, ProjectionPolicy.REPROJECT_TO_DECLARED);
         }
         
         private double calculateDistanceFromReference(Geometry transect, Point intersection, int orientation) {
