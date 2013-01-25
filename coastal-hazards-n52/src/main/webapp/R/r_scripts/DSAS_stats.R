@@ -66,7 +66,7 @@ WLR_CI_2_5 <- vector(length=numBlck)
 WLR_CI_97_5<- vector(length=numBlck)
 transect_ID<- blckNm
 
-statsout <-data.frame(tramsect_ID,LRR_rates,LRR_CI_2_5,LRR_CI_97_5,WLR_rates,WLR_CI_2_5,WLR_CI_97_5)
+statsout <-data.frame(transect_ID,LRR_rates,LRR_CI_2_5,LRR_CI_97_5,WLR_rates,WLR_CI_2_5,WLR_CI_97_5)
 colnames(statsout)<-c('transect_ID','LRR','LCI_2.5','LCI_97.5','WLR','WCI_2.5','WCI_97.5')
 
 netSM  = vector(length=numBlck) # not implemented yet...
@@ -116,10 +116,10 @@ for (b in 1:numBlck){
         statsout[b,7] <- CI[2]
         
     }
-    print(paste("done with block",blckNm[b]))
+    #print(paste("done with block",blckNm[b]))
     
 }
 # output is an identifier and R variable (WPS identifier). The ouput is the name of the text file
 # wps.out: output, text, output title, tabular output data to append to shapefile;
 output = "output.txt"
-write.table(statsout,file="output.txt",col.names=TRUE, row.names=FALSE, sep="\t")
+write.table(statsout,file="output.txt",col.names=TRUE, quote=FALSE, row.names=FALSE, sep="\t")
