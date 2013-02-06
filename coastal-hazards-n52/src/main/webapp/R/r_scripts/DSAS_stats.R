@@ -7,21 +7,6 @@
 input <- "testOut.txt"
 
 
-#WLR_dsas <- function (intersections,confLevel)
-
-
-#{ distance <- intersections$distance
-#   weights <- 1/(intersections$uncy^2)
-#    rate <- intersections$dates
-#    mdl <- lm(formula=distance~rate, weights=weights)
-#    coef <- coefficients(mdl)
-#    CI   <- confint(mdl,"rate",level=confLevel)
-#    rate <- coef["rate"]
-#    WLR <- data.frame(rate,CI)
-    
-#}
-
-
 
 fileN = input # will have input as a string (long string read in)
 reader = c("character","numeric","numeric")
@@ -58,19 +43,19 @@ blockI = blockI[!rmvI]
 blckNm = blckNm[!rmvI]
 numBlck= length(blockI)
 
-LRR_rates  <- vector(length=numBlck)
-LRR_CI_2_5 <- vector(length=numBlck)
-LRR_CI_97_5<- vector(length=numBlck)
-WLR_rates  <- vector(length=numBlck)
-WLR_CI_2_5 <- vector(length=numBlck)
-WLR_CI_97_5<- vector(length=numBlck)
-transect_ID<- blckNm
+LRR_rates   <- vector(length=numBlck)
+LCI         <- vector(length=numBlck)
+WLR_rates   <- vector(length=numBlck)
+WCI			<- vector(length=numBlck)
+SCE_rates   <- vector(length=numBlck)
+NSM_rates   <- vector(length=numBlck)
+EPR_rates   <- vector(length=numBlck)
 
-statsout <-data.frame(transect_ID,LRR_rates,LRR_CI_2_5,LRR_CI_97_5,WLR_rates,WLR_CI_2_5,WLR_CI_97_5)
-colnames(statsout)<-c('transect_ID','LRR','LCI_2.5','LCI_97.5','WLR','WCI_2.5','WCI_97.5')
+transect_ID <- blckNm
 
-netSM  = vector(length=numBlck) # not implemented yet...
-shorCE = vector(length=numBlck) # not implemented yet...
+statsout <-data.frame(transect_ID,LRR_rates,LCI,WLR_rates,WCI,SCE_rates,NSM_rates,EPR_rates)
+colnames(statsout)<-c('transect_ID','LRR','LCI','WLR','WCI','SCE','NSM','EPR')
+
 
 for (b in 1:numBlck){
     if (b==numBlck) enI = nRead-1
@@ -99,11 +84,10 @@ for (b in 1:numBlck){
             mdl <- lm(formula=distance~rate)
             coef <- coefficients(mdl)
             CI   <- confint(mdl,"rate",level=conLevel)
-            rate <- coef["rate"]
+            rate <- coef["rate"]	# is m/day
         
-        statsout[b,2] <- rate
-        statsout[b,3] <- CI[1]
-        statsout[b,4] <- CI[2]
+        statsout[b,2] <- rate*365.25
+        statsout[b,3] <- (CI[2]-CI[1])/2 # LCI
         
         weights <- 1/(uncy^2)
         rate <- dates
@@ -111,12 +95,18 @@ for (b in 1:numBlck){
         coef <- coefficients(mdl)
         CI   <- confint(mdl,"rate",level=conLevel)
         rate <- coef["rate"]
-        statsout[b,5] <- rate
-        statsout[b,6] <- CI[1]
-        statsout[b,7] <- CI[2]
+        statsout[b,4] <- rate*365.25
+        statsout[b,5] <- (CI[2]-CI[1])/2 # WCI
+		
+		SCE <- max(distance)-min(distance)
+		NSM <- 0 # should be which.max...
+		EPR <- 0 # should be NSM/(max(dates)-min(dates))
+		statsout[b,6] <- SCE
+		statsout[b,7] <- NSM
+		statsout[b,8] <- EPR
+		
         
     }
-    #print(paste("done with block",blckNm[b]))
     
 }
 # output is an identifier and R variable (WPS identifier). The ouput is the name of the text file
