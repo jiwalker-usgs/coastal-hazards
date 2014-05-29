@@ -38,7 +38,7 @@ $(document).ready(function () {
 	});
 
 	new CCH.Objects.Item({
-		id: 'uber'
+		id: CCH.CONFIG.itemId
 	}).load({
 		subtree: true,
 		callbacks: {

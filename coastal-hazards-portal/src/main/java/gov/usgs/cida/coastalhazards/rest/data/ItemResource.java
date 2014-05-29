@@ -1,17 +1,15 @@
 package gov.usgs.cida.coastalhazards.rest.data;
 
 import com.sun.jersey.api.NotFoundException;
-import com.sun.jersey.server.impl.container.servlet.JerseyServletContainerInitializer;
 import gov.usgs.cida.coastalhazards.exception.BadRequestException;
 import gov.usgs.cida.coastalhazards.exception.UnauthorizedException;
 import gov.usgs.cida.coastalhazards.gson.GsonUtil;
 import gov.usgs.cida.coastalhazards.jpa.ItemManager;
 import gov.usgs.cida.coastalhazards.model.Item;
-import gov.usgs.cida.coastalhazards.model.util.ItemLastUpdateComparator;
 import gov.usgs.cida.coastalhazards.oid.session.SessionResource;
 import gov.usgs.cida.coastalhazards.rest.data.util.HttpUtil;
 import gov.usgs.cida.coastalhazards.rest.data.util.ItemUtil;
-import java.util.Collections;
+import gov.usgs.cida.utilities.FuzzyDateComparator;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
@@ -85,8 +83,9 @@ public class ItemResource {
                 } else {
                     serverItemDate = item.getLastUpdate();
                 }
-                
-				if (clientItemDate != null && clientItemDate.equals(serverItemDate)) {
+                FuzzyDateComparator fuzzyDateComparator = new FuzzyDateComparator();
+				
+				if (clientItemDate != null && 0 == fuzzyDateComparator.compare(clientItemDate, serverItemDate)) {
 					response = Response.notModified().build();
 				} else {
 					String jsonResult = item.toJSON(subtree);
