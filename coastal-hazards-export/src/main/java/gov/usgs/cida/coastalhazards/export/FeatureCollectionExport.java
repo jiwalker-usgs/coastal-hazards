@@ -105,7 +105,7 @@ public class FeatureCollectionExport {
         //SimpleFeatureIterator features = simpleFeatureCollection.features();
         SimpleFeatureType type = buildFeatureType();
         FileDataStoreFactorySpi factory = FileDataStoreFinder.getDataStoreFactory("shp");
-        File shpFile = checkAndCreateFile();
+        File shpFile = checkAndCreateFile(".shp");
         Map datastoreConfig = new HashMap<>();
         datastoreConfig.put("url", shpFile.toURI().toURL());
         ShapefileDataStore shpfileDataStore = (ShapefileDataStore)factory.createNewDataStore(datastoreConfig);
@@ -143,7 +143,15 @@ public class FeatureCollectionExport {
         }
         return success;
     }
-    
+    public boolean writeToKmz() throws IOException{
+		boolean success = false;
+		SimpleFeatureType type = buildFeatureType();
+		FileDataStoreFactorySpi factory = FileDataStoreFinder.getDataStoreFactory("kmz");
+        File shpFile = checkAndCreateFile(".kmz");
+        Map datastoreConfig = new HashMap<>();
+        datastoreConfig.put("url", shpFile.toURI().toURL());
+		return success;
+	}
     private SimpleFeatureType buildFeatureType() {
         SimpleFeatureType featureType = null;
         SimpleFeatureTypeBuilder builder = new SimpleFeatureTypeBuilder();
@@ -188,8 +196,8 @@ public class FeatureCollectionExport {
         return false;
     }
     
-    private File checkAndCreateFile() throws IOException {
-        File shpFile = null;
+    private File checkAndCreateFile(String extension) throws IOException {
+        File file = null;
         if (!outputDirectory.exists()) {
             FileUtils.forceMkdir(outputDirectory);
         } else if (!outputDirectory.isDirectory()) {
@@ -197,12 +205,12 @@ public class FeatureCollectionExport {
         } else {
             // good to go?
         }
-        String shpName = namePrefix + ".shp";
-        shpFile = FileUtils.getFile(outputDirectory, shpName);
-        if (shpFile.exists()) {
-            throw new FileAlreadyExistsException(shpName);
+        String fileName = namePrefix + extension;
+        file = FileUtils.getFile(outputDirectory, fileName);
+        if (file.exists()) {
+            throw new FileAlreadyExistsException(fileName);
         }
         
-        return shpFile;
+        return file;
     }
 }
