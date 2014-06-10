@@ -50,6 +50,7 @@
 
 #cchMapLegendInnerContainer table caption {
 	display: table-caption;
+	font-size: 13px;
 }
 
 #cchMapLegendInnerContainer table th, td{

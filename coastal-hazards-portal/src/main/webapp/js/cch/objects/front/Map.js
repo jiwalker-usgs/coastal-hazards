@@ -42,7 +42,7 @@ CCH.Objects.Front.Map = function (args) {
 
 		if (!layer) {
 			if (item && 'function' === typeof item.getWmsLayer) {
-				layer = item.getWmsLayer();
+				layer = item.getWmsLayer(args);
 			}
 		}
 
@@ -164,8 +164,8 @@ CCH.Objects.Front.Map = function (args) {
 			});
 
 			CCH.LOG.debug('Map.js::init():Replacing map graphics');
-			$('#OpenLayers_Control_MaximizeDiv_innerImage').attr('src', 'images/openlayers/maximize_minimize_toggle/tall-medium-arrow-closed-right.svg');
-			$('#OpenLayers_Control_MinimizeDiv_innerImage').attr('src', 'images/openlayers/maximize_minimize_toggle/tall-medium-arrow-open-left.svg');
+			$('#OpenLayers_Control_MaximizeDiv_innerImage').attr('src', 'images/openlayers/maximize_minimize_toggle/cch-layer-switcher-closed.svg');
+			$('#OpenLayers_Control_MinimizeDiv_innerImage').attr('src', 'images/openlayers/maximize_minimize_toggle/cch-layer-switcher-opened.svg');
 
 			// Bind application event handlers
 			$(window).on({

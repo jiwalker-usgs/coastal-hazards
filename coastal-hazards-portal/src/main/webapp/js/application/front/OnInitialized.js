@@ -128,8 +128,6 @@ CCH.CONFIG.onAppInitialize = function () {
 								});
 							};
 							$(window).on('cch.ui.resized', resizeHandler);
-
-
 						}
 					],
 					error: [
@@ -162,6 +160,12 @@ CCH.CONFIG.onAppInitialize = function () {
 						$(window).trigger('cch.slide.search.button.click.explore', {
 							id: id
 						});
+						
+						// Triggering the explore click above also triggers the basket slider to close. When 
+						// the basket slider closes, it may hide all the layers though through testing, sometimes
+						// it doesn't. It looks like a timing issue. Adding this hack here ensure that the layer 
+						// the user came to see shows up
+						CCH.items.getById({id: id}).showLayer();
 					} else {
 						// The item could not be found. Show an error and wait for the app to resize
 						// (happens on loading completetion). When it happens, zoom to the bounding
@@ -181,7 +185,7 @@ CCH.CONFIG.onAppInitialize = function () {
 
 			CCH.CONFIG.loadUberItem({
 				subtree: true,
-				zoomToBbox: false,
+				zoomToBbox: true,
 				overridePreviousBounds: false
 			});
 		}

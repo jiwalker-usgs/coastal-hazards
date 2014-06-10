@@ -15,4 +15,14 @@ public class ColorUtility {
     public static String toHexLowercase(Color color) {
         return toHex(color).toLowerCase();
     }
+    
+    public static Color fromHex(String hex) {
+        int hashIdx = hex.indexOf("#");
+        
+        String justHex = (hashIdx >= 0) ? hex.substring(hashIdx + 1) : hex;
+        int hexIntValue = Integer.parseInt(justHex, 16);
+        Color color = new Color(hexIntValue);
+        
+        return color;
+    }
 }

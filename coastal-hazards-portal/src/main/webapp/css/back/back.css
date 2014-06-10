@@ -40,7 +40,7 @@ html, body {
 /* Item Title Row */
 .container > div.row:nth-child(2) {
 	text-align: center;
-	font-size: 1.7em;
+	font-size: 24px;
 	margin-top: 10px;
 	margin-bottom: 10px;
 	font-weight: 600;
@@ -74,20 +74,14 @@ html, body {
 	color: #FFFFFF;
 	font-size: 2em;
 }
-.container >#header-row > #app-navbar-site-title-container > #app-navbar-title-print {
-	display: none;
+
+.container >#header-row  #app-navbar-site-title-container > #app-navbar-title-print {
+	display: none !important;
 }
 
 /* Map */
 #map {
 	height: 400px;
-}
-
-/* Social Media Icon */
-#social-link-container {
-	vertical-align: middle;
-	margin-left: 10px;
-	position: absolute;
 }
 
 /* Info Graph */
@@ -102,7 +96,7 @@ html, body {
 
 /* Summary container */
 .container > div.row:nth-child(3) > div:nth-child(2) > div > div {
-	font-size:1.3em;
+	font-size: 13px;
 	line-height: 1.5em;
 }
 
@@ -124,20 +118,30 @@ html, body {
 	text-transform: capitalize;
 }
 
+/* Override the 40px padding bootstrap puts on lists */
+#info-container-publications-list-span > ul {
+	padding-left: 5px;
+	-webkit-padding-start: 5px;
+	-moz-padding-start: 5px;
+}
+
 /* Hide QR code for screen media */
 #qr-code {
 	display: none;
 }
 
+/* Social media sharing modal */
+#modal-share-summary-url-inputbox {
+	width: 100%;
+	font-size: 2em;
+}
+
+
+
 @media (max-width: 440px) {
 	/* Item Title Row*/
 	.container > div.row:nth-child(2) {
 		font-size: 0.65em;
-	}
-
-	/* Social Media Icon */
-	#social-link-container  {
-		margin-left: 5px;
 	}
 
 	.container > div.row:nth-child(3) > div:first-child > div > div.olMap {

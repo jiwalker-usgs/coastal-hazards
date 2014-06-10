@@ -163,7 +163,7 @@
 				</a>
 				<%-- Application Title --%>
 				<div id="app-navbar-site-title-container" class="app-navbar-item-container">
-					<div class="app-navbar-title-print">USGS Coastal Change Hazards Portal</div>
+					<div id="app-navbar-title-print">USGS Coastal Change Hazards Portal</div>
 					<div class="app-navbar-title visible-lg visible-md hidden-sm hidden-xs">USGS Coastal Change Hazards Portal</div>
 					<div class="app-navbar-title hidden-lg hidden-md visible-sm hidden-xs">Coastal Change Hazards Portal</div>
 					<div class="app-navbar-title hidden-lg hidden-md hidden-sm visible-xs">&nbsp;</div>
@@ -194,7 +194,7 @@
 								<span id="download-full-link-container"><a class="btn btn-default btn-sm" role="button">Download These Data</a></span>
 								<span id="metadata-link-container"><a class="btn btn-default btn-sm" role="button" target="portal_metadata_window">Metadata</a></span>
 								<span id="view-services-container"><button type="button" class="btn btn-default btn-sm" data-toggle="modal" data-target="#modal-services-view">Map Services</button></span>
-								<span id="social-link-container"></span>
+								<span id="view-sharing-container"><button type="button" class="btn btn-default btn-sm disabled" data-toggle="modal" data-target="#modal-sharing-view">Sharing</button></span>
 							</div>
 						</div>
 					</div>
@@ -232,6 +232,31 @@
 					<div class="modal-body">
 						<ul class="nav nav-tabs"></ul>
 						<div class="tab-content"></div>
+					</div>
+					<div class="modal-footer">
+						<a href="#" class="btn btn-default"  data-dismiss="modal" aria-hidden="true">Close</a>
+					</div>
+				</div>
+			</div>
+		</div>
+
+		<%-- Social Sharing Modal Window --%>	
+		<div id="modal-sharing-view" class="modal fade" tabindex ="-1" role="dialog" aria-labelledby="modal-label" aria-hidden="true">
+			<div class="modal-dialog">
+				<div class="modal-content">
+					<div class="modal-header">
+						<button class="close" aria-hidden="true" data-dismiss="modal" type="button">×</button>
+						<h4 id="modal-label">Share Your Coastal Change Hazards Portal View With Others</h4>
+					</div>
+					<div class="modal-body">
+						<div class="row">
+							<div class="well well-small">
+								<div id="modal-share-summary-url-inputbox-div">
+									<input id="modal-share-summary-url-inputbox" type='text' autofocus readonly size="20" placeholder="Loading..." title="modal-share-summary-url-inputbox"/>
+								</div>
+							</div>
+							<span class="pull-right" id='twitter-button-span'></span>
+						</div>
 					</div>
 					<div class="modal-footer">
 						<a href="#" class="btn btn-default"  data-dismiss="modal" aria-hidden="true">Close</a>

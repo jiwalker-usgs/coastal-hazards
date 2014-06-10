@@ -155,37 +155,54 @@ CCH.Objects.Item = function (args) {
 		}
 	};
 
-	me.createWmsLayer = function () {
+	me.createWmsLayer = function (args) {
+		args = args || {};
 		var id = me.id,
 			service = me.getService('proxy_wms'),
 			endpoint = service.endpoint,
 			layers = service.serviceParameter || [],
 			bbox = me.bbox,
-			layer = me.itemType === 'aggregation' ? null : new OpenLayers.Layer.WMS(
+			itemType = me.itemType,
+			sldId = id,
+			aggregationId = args.aggregationName,
+			layer = null;
+
+		if (itemType !== 'aggregation') {
+			
+			// If I am a histocial year layer, I'd like to use the id of my parent for the SLD
+			// TODO- Uncomment this when we've standardized our layer date attributes
+//			if (me.type === 'historical' && me.attr.toLowerCase().indexOf('date') !== -1) {
+//				if (aggregationId) {
+//					sldId = aggregationId.replace(/_$/, "");
+//				}
+//			}
+			
+			layer = new OpenLayers.Layer.WMS(
 				id,
 				endpoint,
 				{
 					layers: layers,
 					format: 'image/png',
 					transparent: true,
-					sld: CCH.CONFIG.publicUrl + '/data/sld/' + id,
+					sld: CCH.CONFIG.publicUrl + '/data/sld/' + sldId,
 					styles: 'cch',
 					version: '1.3.0',
 					exceptions: 'application/vnd.ogc.se_blank'
-				},
-			{
-				displayOutsideMaxExtent: false,
-				projection: 'EPSG:3857',
-				isBaseLayer: false,
-				displayInLayerSwitcher: false,
-				singleTile: me.ribboned || false,
-				maxExtent: new OpenLayers.Bounds(bbox).transform(CCH.CONFIG.map.modelProjection, new OpenLayers.Projection('EPSG:3857')),
-				bbox: bbox,
-				itemid: id,
-				transitionEffect: 'map-resize',
-				type: 'cch'// CCH specific setting
-			}
+				}, {
+					displayOutsideMaxExtent: false,
+					projection: 'EPSG:3857',
+					isBaseLayer: false,
+					displayInLayerSwitcher: false,
+					singleTile: me.ribboned || false,
+					maxExtent: new OpenLayers.Bounds(bbox).transform(CCH.CONFIG.map.modelProjection, new OpenLayers.Projection('EPSG:3857')),
+					bbox: bbox,
+					itemid: id,
+					transitionEffect: 'map-resize',
+					type: 'cch'// CCH specific setting
+				}
 			);
+		}
+
 
 		return layer;
 	};

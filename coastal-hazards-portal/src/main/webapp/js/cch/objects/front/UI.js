@@ -137,68 +137,40 @@ CCH.Objects.Front.UI = function (args) {
 	};
 
 	me.displayShareModal = function (url) {
+		var callback = function (data) {
+			var url = data.tinyUrl || data.responseJSON.full_url,
+				shareInput = $('#' + me.SHARE_INPUT_ID);
+
+			shareInput.val(url);
+			$('#' + me.SHARE_URL_BUTTON_ID).attr({
+				'href': url
+			}).removeClass('disabled');
+			shareInput.select();
+			twttr.widgets.createShareButton(
+				url,
+				$('#' + me.SHARE_TWITTER_BUTTON_ID)[0],
+				function (element) {
+					CCH.LOG.trace('Twitter create share button callback triggered on ' + element);
+				},
+				{
+					hashtags: 'USGS_CCH',
+					lang: 'en',
+					size: 'large',
+					text: 'Check out my CCH View!',
+					count: 'none'
+				}
+			);
+			$('#' + me.SHARE_MODAL_ID).modal('show');
+			twttr.events.bind('tweet', function () {
+				alertify.log('Your view has been tweeted. Thank you.');
+			});
+		};
+
 		CCH.Util.Util.getMinifiedEndpoint({
 			location: url,
 			callbacks: {
-				success: [
-					function (json) {
-						var minifiedUrl = json.tinyUrl,
-							shareInput = $('#' + me.SHARE_INPUT_ID);
-
-						shareInput.val(minifiedUrl);
-						$('#' + me.SHARE_URL_BUTTON_ID).attr({
-							'href': minifiedUrl
-						}).removeClass('disabled');
-						shareInput.select();
-						twttr.widgets.createShareButton(
-							minifiedUrl,
-							$('#' + me.SHARE_TWITTER_BUTTON_ID)[0],
-							function (element) {
-								CCH.LOG.trace('Twitter create share button callback triggered on ' + element);
-							},
-							{
-								hashtags: 'USGS_CCH',
-								lang: 'en',
-								size: 'large',
-								text: 'Check out my CCH View!',
-								count: 'none'
-							}
-						);
-						$('#' + me.SHARE_MODAL_ID).modal('show');
-						twttr.events.bind('tweet', function () {
-							alertify.log('Your view has been tweeted. Thank you.');
-						});
-					}
-				],
-				error: [
-					function (data) {
-						var fullUrl = data.responseJSON.full_url,
-							shareInput = $('#' + me.SHARE_INPUT_ID);
-						shareInput.val(fullUrl);
-						$('#' + me.SHARE_URL_BUTTON_ID).attr({
-							'href': fullUrl
-						}).removeClass('disabled');
-						shareInput.select();
-						twttr.widgets.createShareButton(
-							fullUrl,
-							$('#' + me.SHARE_TWITTER_BUTTON_ID)[0],
-							function () {
-								// Any callbacks that may be needed
-							},
-							{
-								hashtags: 'USGS_CCH',
-								lang: 'en',
-								size: 'large',
-								text: 'Check out my CCH View!',
-								count: 'none'
-							}
-						);
-						$('#' + me.SHARE_MODAL_ID).modal('show');
-						twttr.events.bind('tweet', function () {
-							alertify.log('Your view has been tweeted. Thank you.');
-						});
-					}
-				]
+				success: [callback],
+				error: [callback]
 			}
 		});
 	};
@@ -285,10 +257,10 @@ CCH.Objects.Front.UI = function (args) {
 			'eventLabel': errorThrown
 		});
 
-splashMessage = splashMessage || '<b>Item Not Found</b><br /><div id="splash-error-message">There was a problem loading information.' +
-						'We could not find information needed to continue loading the Coastal Change Hazards Portal. ' +
-						'Either try to reload the application or let us know that this happened.</div>';
-		
+		splashMessage = splashMessage || '<b>Item Not Found</b><br /><div id="splash-error-message">There was a problem loading information.' +
+			'We could not find information needed to continue loading the Coastal Change Hazards Portal. ' +
+			'Either try to reload the application or let us know that this happened.</div>';
+
 		splashUpdate(splashMessage);
 		splashAppend($('<span />').append(continueLink));
 		splashAppend(emailLink);

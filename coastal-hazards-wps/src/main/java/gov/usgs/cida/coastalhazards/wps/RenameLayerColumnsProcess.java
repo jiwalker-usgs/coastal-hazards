@@ -75,11 +75,13 @@ public class RenameLayerColumnsProcess implements GeoServerProcess {
             String newColumnName = columnArr[1];
             columnNameMap.put(originalColumnName, newColumnName);
         }
-        
-        for (AttributeDescriptor attributeDescriptor : attributeList) {
+        AttributeDescriptor attributeDescriptor;
+		int length = attributeList.size();
+		
+        for (int i = 0; i < length; i++){
+			attributeDescriptor = attributeList.get(i);
             String attributeName = attributeDescriptor.getName().toString();
             if (columnNameMap.containsKey(attributeName)) {
-                int ind = attributeList.indexOf(attributeDescriptor);
                 AttributeType type = attributeDescriptor.getType();
                 Name newName = new NameImpl(columnNameMap.get(attributeName));
                 int minOccurs = attributeDescriptor.getMinOccurs();
@@ -87,7 +89,7 @@ public class RenameLayerColumnsProcess implements GeoServerProcess {
                 boolean isNillable = attributeDescriptor.isNillable();
                 Object defaultValue = attributeDescriptor.getDefaultValue();
                 AttributeDescriptor renamedAttributeDescriptor = new AttributeDescriptorImpl(type, newName, minOccurs, maxOccurs, isNillable, defaultValue);
-                attributeList.set(ind, renamedAttributeDescriptor);
+                attributeList.set(i, renamedAttributeDescriptor);
             }
         }
         

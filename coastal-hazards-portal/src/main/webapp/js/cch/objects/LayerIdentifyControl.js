@@ -28,6 +28,7 @@ CCH.Objects.LayerIdentifyControl = OpenLayers.Class(OpenLayers.Control.WMSGetFea
 			popup,
 			popupHtml,
 			splitName,
+			layerId,
 			trimLayerName = function (name) {
 				// Names can be:
 				// aggregationId_itemId_r_ribbonIndex
@@ -103,17 +104,20 @@ CCH.Objects.LayerIdentifyControl = OpenLayers.Class(OpenLayers.Control.WMSGetFea
 			// Close any other layer identification widgets on the map
 			CCH.map.removeAllPopups();
 			CCH.map.getMap().addPopup(popup, true);
+			$('#feature-identification-popup').css('z-index', 1009);
 
 			for (layerName in featuresByName) {
 				if (featuresByName.hasOwnProperty(layerName)) {
 					layerName = trimLayerName(layerName);
+					layerId = CCH.map.getMap().getLayersBy('itemid', layerName)[0].params.SLD.split('/').last();
 					if (featuresByName.hasOwnProperty(layerName)) {
 						features = featuresByName[layerName];
 						featureCount = features.length;
 						if (featureCount) {
 							CCH.Util.Util.getSLD({
-								itemId: layerName,
+								itemId: layerId,
 								contextPath: CCH.CONFIG.contextPath,
+								sldUrl: CCH.map.getMap().getLayersBy('itemid', layerName)[0].params.SLD,
 								context: {
 									features: features,
 									layerId: layerName,

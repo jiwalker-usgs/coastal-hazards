@@ -5,7 +5,7 @@ import gov.usgs.cida.coastalhazards.model.Item;
 import gov.usgs.cida.coastalhazards.model.util.DataDomain;
 import gov.usgs.cida.utilities.colors.AttributeRange;
 import gov.usgs.cida.utilities.colors.ColorUtility;
-import gov.usgs.cida.utilities.colors.RainbowColorMap;
+import gov.usgs.cida.utilities.colors.DistinctColorMap;
 import java.awt.Color;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -49,7 +49,7 @@ public final class Shorelines {
                 Integer minimum = Integer.parseInt(domainValues.first());
                 Integer maximum = Integer.parseInt(domainValues.last());
                 AttributeRange range = new AttributeRange(minimum, maximum);
-                RainbowColorMap colorMap = new RainbowColorMap(range);
+                DistinctColorMap colorMap = new DistinctColorMap(range);
                 
                 String[] tmpColors = new String[domainValues.size()];
                 float[] tmpThresholds = new float[domainValues.size()];
@@ -61,7 +61,7 @@ public final class Shorelines {
                     Color color = colorMap.valueToColor(intYear);
                     String hex = ColorUtility.toHexLowercase(color);
                     tmpColors[i] = hex;
-                    tmpThresholds[i] = intYear;
+                    tmpThresholds[i] = (float)intYear;
                     Map<String, Object> binMap = new HashMap<>();
                     binMap.put("years", intYear);
                     binMap.put("color", hex);

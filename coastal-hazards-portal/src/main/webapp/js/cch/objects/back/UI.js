@@ -88,7 +88,6 @@ CCH.Objects.Back.UI = function (args) {
 		$infoSummary.html(item.summary.full.text);
 		$infoPubListSpan.append($publist);
 
-		me.buildTwitterButton();
 		CCH.map.buildMap();
 
 		if (item.getLayerList().layers.length) {
@@ -123,51 +122,52 @@ CCH.Objects.Back.UI = function (args) {
 			me.removeLegendContainer();
 		}
 
+		var minificationCallback = function (data) {
+			var url = data.tinyUrl || data.responseJSON.full_url,
+				$shareInput = $('#modal-share-summary-url-inputbox'),
+				$shareButton = $('#view-sharing-container button');
+
+			// Add the url to the input box
+			$shareInput.val(url);
+			// Highlight the entire input box
+			$shareInput.select();
+			// Enable the share button
+			$shareButton.removeClass('disabled');
+
+			twttr.widgets.createShareButton(
+				url,
+				$('#twitter-button-span')[0],
+				function (element) {
+					CCH.LOG.trace('Twitter create share button callback triggered on ' + element);
+				},
+				{
+					hashtags: 'USGS_CCH',
+					lang: 'en',
+					size: 'large',
+					text: CCH.CONFIG.item.summary.tiny.text,
+					count: 'none'
+				}
+			);
+			twttr.events.bind('tweet', function () {
+				alertify.log('Your view has been tweeted. Thank you.');
+			});
+		};
+
+		// Build the share modal
+		CCH.Util.Util.getMinifiedEndpoint({
+			location: CCH.CONFIG.publicUrl + '/ui/info/item/' + CCH.CONFIG.itemId,
+			callbacks: {
+				success: [minificationCallback],
+				error: [minificationCallback]
+			}
+		});
+
 		return me;
 	};
 
 
 	me.removeLegendContainer = function () {
 		$('#info-legend').remove();
-	};
-
-	me.buildTwitterButton = function () {
-		var url = window.location.origin + CCH.CONFIG.contextPath + '/ui/item/' + CCH.CONFIG.itemId;
-		CCH.Util.Util.getMinifiedEndpoint({
-			location: url,
-			contextPath: CCH.CONFIG.contextPath,
-			callbacks: {
-				success: [
-					function (data, textStatus, jqXHR) {
-						me.createShareButton(data.tinyUrl);
-					}],
-				error: [
-					function (jqXHR, textStatus, errorThrown) {
-						me.createShareButton(url);
-					}]
-			}
-		});
-	};
-
-	me.createShareButton = function (url) {
-		twttr.ready(function (twttr) {
-			twttr.widgets.createShareButton(
-				url,
-				$('#social-link-container')[0],
-				function (element) {
-					// Any callbacks that may be needed
-				},
-				{
-					hashtags: 'USGS_CCH',
-					lang: 'en',
-					size: 'large',
-					text: CCH.CONFIG.item.summary.tiny.text
-				});
-
-			twttr.events.bind('tweet', function (event) {
-
-			});
-		});
 	};
 
 	me.createModalServicesTab = function (args) {

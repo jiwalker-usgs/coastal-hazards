@@ -49,7 +49,7 @@ public class GoUsaGovUtils {
 	}
 
 	public static String clicks(final String endpoint) throws URISyntaxException, IOException {
-		return executeCall("cilck", endpoint);
+		return executeCall("click", endpoint);
 	}
 
 	private static String executeCall(String command, String endpoint) throws URISyntaxException, IOException {

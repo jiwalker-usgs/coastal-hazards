@@ -37,7 +37,7 @@ CCH.Objects.Back.Map = function (args) {
 			if (card) {
 				layer = card.layer;
 			} else if (item && 'function' === typeof item.getWmsLayer) {
-				layer = item.getWmsLayer();
+				layer = item.getWmsLayer(args);
 				layer.events.register('loadstart', layer, function () {
 					$('div.olMap').css('cursor', 'wait');
 					$('body').css('cursor', 'wait');
